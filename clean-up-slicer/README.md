@@ -1,3 +1,5 @@
+Source: https://gist.github.com/ex-nerd/22d0a9796f4f5df7080f9ac5a07a381f
+
 ```
 Martins-MacBook-Pro:clean-up-slicer martin$ python cleanup_prusa_slic3r_gcode.py --help
 usage: cleanup_prusa_slic3r_gcode.py [-h] [--verbose] [--keepcomments]
