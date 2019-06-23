@@ -16,28 +16,34 @@ import os
 import re
 import argparse
 
-def addled(infile, outfile, verbose=False, skip_comments=False):
+def addled(infile, outfile, verbose=False):
     lines = [line for line in infile]
-    num_lines = sum(1 for line in lines) # 100%
+    num_lines = len(list(filter(lambda line: not line.startswith(';'), lines))) # 100%
     
     #lines per percent
     lines_per_percent = num_lines / 100
 
     if verbose:
-        print('Number of lines: {:d}'.format(num_lines))
+        print('Total number of lines: {:d}'.format(len(lines)))
+        print('Number of lines (w/o comments): {:d}'.format(num_lines))
         print('Number of lines per percent: {:f}'.format(lines_per_percent))
 
     line_count = 0
+    total_line_count = 0
     percent = 0
     for line in lines:
-        line_count = line_count + 1
-        if line_count > lines_per_percent:
-            line_count = 0
-            percent = percent + 1
-            outfile.write('; Percent = {:d}\n'.format(percent))
-            print('; Percent = {:d}'.format(percent))
+        total_line_count = total_line_count + 1
+        if not line.startswith(';'):
+            line_count = line_count + 1
+            if line_count > lines_per_percent:                
+                percent = percent + 1
+                outfile.write('; Percent = {:d}\n'.format(percent))
+                if verbose:
+                    print('Percent: {:d} @ line {:d}'.format(percent, total_line_count))
+                line_count = 0
         outfile.write(line)
-
+    if verbose:
+        print('--\n')
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -52,11 +58,7 @@ def parse_args():
         action='store_true',
         help="Enable additional debug output",
     )
-    parser.add_argument(
-        '--skipcomments',
-        action='store_false',
-        help="skip comments while counting lines",
-    )
+    
     parser.add_argument(
         '--overwrite',
         action='store_true',
@@ -75,7 +77,6 @@ if __name__ == '__main__':
     args = parse_args()
     if args.verbose:
         print('\r\n\r\nStarting conversion: \r\n\r\n')
-        print('- skip comments: {}'.format(args.skipcomments))
         print('- overwrite source file: {}'.format(args.overwrite))
         print('- source files:')
         for infile in args.filenames:
@@ -85,7 +86,7 @@ if __name__ == '__main__':
         infilename = infile.name
         tmpfilename = '{}.tmp{}'.format(*os.path.splitext(infilename))
         with open(tmpfilename, 'w') as tmpfile:
-            addled(infile, tmpfile, args.verbose, args.skipcomments)
+            addled(infile, tmpfile, args.verbose)
         infile.close()
         if args.overwrite:
             os.rename(infilename, "{}.bak".format(infilename))
