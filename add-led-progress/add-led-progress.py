@@ -23,10 +23,9 @@ def addled(infile, outfile, verbose=False):
     #lines per percent
     lines_per_percent = num_lines / 100
 
-    if verbose:
-        print('Total number of lines: {:d}'.format(len(lines)))
-        print('Number of lines (w/o comments): {:d}'.format(num_lines))
-        print('Number of lines per percent: {:f}'.format(lines_per_percent))
+    print('Total number of lines: {:d}'.format(len(lines)))
+    print('Number of lines (w/o comments): {:d}'.format(num_lines))
+    print('Number of lines per percent: {:f}'.format(lines_per_percent))
 
     line_count = 0
     total_line_count = 0
@@ -56,22 +55,21 @@ def parse_args():
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
-        help="Enable additional debug output",
+        help="Enable debug output",
     )
     
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help="Overwrite the input file",
+        help="Overwrite the input file (default is FALSE)",
     )
     parser.add_argument(
         'filenames',
         type=argparse.FileType('r'),
         nargs='+',
-        help="One or more paths to .gcode files to extend",
+        help="One or more paths to .gcode files to extend with progress information",
     )
     return parser.parse_args()
-
 
 if __name__ == '__main__':
     args = parse_args()
